@@ -1,9 +1,13 @@
 <?php declare(strict_types=1);
 
+namespace Tests;
+
+use DomainException;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 use Torugo\JWT\Enums\JWTAlg;
 use Torugo\JWT\Exceptions\ExpiredTokenException;
 use Torugo\JWT\Exceptions\InvalidKeyException;
@@ -15,9 +19,9 @@ use Torugo\Util\TFile\TFile;
 #[TestDox("JWT unit tests")]
 class JWTTest extends TestCase
 {
-    protected static $symmetricKey;
-    protected static $privateRSAKey;
-    protected static $publicRSAKey;
+    protected static string $symmetricKey;
+    protected static string $privateRSAKey;
+    protected static string $publicRSAKey;
 
     public static function setUpBeforeClass(): void
     {
@@ -107,7 +111,7 @@ class JWTTest extends TestCase
 
             try {
                 JWT::validate($jwt, $key);
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 $this->assertStringContainsString(
                     "InvalidTokenException",
                         $th::class
@@ -206,14 +210,14 @@ class JWTTest extends TestCase
         try {
             $invalidJWT = "x.y.z.w";
             JWT::decodePayload($invalidJWT);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals("Torugo\JWT\Exceptions\InvalidTokenException", $th::class);
         }
 
         try {
             $invalidJWT = "x..y";
             JWT::decodePayload($invalidJWT);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals("Torugo\JWT\Exceptions\InvalidTokenException", $th::class);
         }
     }
