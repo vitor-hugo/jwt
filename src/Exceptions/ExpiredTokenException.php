@@ -21,7 +21,7 @@ class ExpiredTokenException extends Exception
     public function __toString(): string
     {
         if ($this->code > 0) {
-            return "{$this->message} ({$this->code})";
+            return "$this->message ($this->code)";
         } else {
             return $this->message;
         }
