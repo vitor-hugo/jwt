@@ -313,4 +313,45 @@ class JWTTest extends TestCase
         $this->expectException(InvalidTokenException::class);
         JWT::validate($token, $key);
     }
+
+    #[TestDox("Should refresh an expired token")]
+    public function testShouldRefreshAnExpiredToken()
+    {
+        $timestamp = time();
+
+        $payload = [
+            "iat" => $timestamp - 500,
+            "exp" => $timestamp - 400
+        ];
+
+        $key = $this->getRightDecodingKey(JWTAlg::HS256);
+        $token = JWT::encode($payload, $key, JWTAlg::HS256);
+
+        try {
+            JWT::validate($token, $key);
+        } catch (Throwable $th) {
+            $this->assertEquals(ExpiredTokenException::class, $th::class);
+        }
+
+        $refreshed = JWT::refresh($token, $key);
+
+        $payload = JWT::validate($refreshed, $key);
+        $this->assertIsArray($payload);
+
+        return $token;
+    }
+
+    #[TestDox("SHould throw InvalidTokenException when trying to refresh an invalid token")]
+    #[Depends("testShouldRefreshAnExpiredToken")]
+    public function testShouldThrowWhenTryingToRefreshAnInvalidToken(string $token)
+    {
+        $this->expectException(InvalidTokenException::class);
+        $this->expectExceptionMessage(
+            "JWT: Could not refresh the token because it is invalid."
+        );
+        $token = "{$token}xxx";
+        $key = $this->getRightDecodingKey(JWTAlg::HS256);
+        JWT::refresh($token, $key);
+
+    }
 }
