@@ -2,13 +2,13 @@
 
 namespace Tests;
 
-use DomainException;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 use Torugo\JWT\Enums\JWTAlg;
+use Torugo\JWT\Exceptions\EncodingException;
 use Torugo\JWT\Exceptions\ExpiredTokenException;
 use Torugo\JWT\Exceptions\InvalidKeyException;
 use Torugo\JWT\Exceptions\InvalidTokenException;
@@ -154,10 +154,10 @@ class JWTTest extends TestCase
         JWT::encode($payload, "xyz", JWTAlg::RS256);
     }
 
-    #[TestDox("Should throw DomainException on json_encode() function error")]
+    #[TestDox("Should throw EncodingException on json_encode() function error")]
     public function testThrowExceptionOnJsonEncodeError()
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(EncodingException::class);
         $arr = ["\xB1\x31"];
         JWT::encode($arr, "QMO4Vt5SOKg9zmXrvzt2Ph4rJr6", JWTAlg::HS256);
     }
@@ -261,10 +261,10 @@ class JWTTest extends TestCase
         JWT::decodeHeader($token);
     }
 
-    #[TestDox("Should throw DomainException on json_decode() function error")]
+    #[TestDox("Should throw EncodingException on json_decode() function error")]
     public function testThrowOnJsonDecodeError()
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(EncodingException::class);
         $this->expectExceptionMessage("JWT: Malformed UTF-8 characters, possibly incorrectly encoded");
         JWT::decodeHeader("sTE.sTE.sTE");
     }
