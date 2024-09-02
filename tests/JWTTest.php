@@ -33,7 +33,7 @@ class JWTTest extends TestCase
     private function getRightEncodingKey(JWTAlg $alg): string
     {
         $a = substr($alg->value, 0, 2);
-        if ($a === "hs") {
+        if ($a === "HS") {
             return self::$symmetricKey;
         } else {
             return self::$privateRSAKey;
@@ -43,7 +43,7 @@ class JWTTest extends TestCase
     private function getRightDecodingKey(JWTAlg $alg): string
     {
         $a = substr($alg->value, 0, 2);
-        if ($a === "hs") {
+        if ($a === "HS") {
             return self::$symmetricKey;
         } else {
             return self::$publicRSAKey;

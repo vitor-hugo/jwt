@@ -14,12 +14,12 @@ use Torugo\Util\TBase64\TBase64;
 final class JWT
 {
     private const SUPPORTED_ALGS = [
-        "hs256" => ["hash_hmac", "sha256"],
-        "hs384" => ["hash_hmac", "sha384"],
-        "hs512" => ["hash_hmac", "sha512"],
-        "rs256" => ["openssl", "sha256"],
-        "rs384" => ["openssl", "sha384"],
-        "rs512" => ["openssl", "sha512"],
+        "HS256" => ["hash_hmac", "sha256"],
+        "HS384" => ["hash_hmac", "sha384"],
+        "HS512" => ["hash_hmac", "sha512"],
+        "RS256" => ["openssl", "sha256"],
+        "RS384" => ["openssl", "sha384"],
+        "RS512" => ["openssl", "sha512"],
     ];
 
     /**
