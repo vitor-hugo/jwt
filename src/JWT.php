@@ -113,11 +113,13 @@ final class JWT
      */
     private static function calcNBF(int $timestamp): int
     {
-        $timeStr = (string) $timestamp;
-        $len = strlen($timeStr) - 4;
-        $sub = substr($timeStr, 0, 4);
-        $pad = str_pad($sub, $len, "0");
-        return (int) $pad;
+        $x = strlen((string) $timestamp) - 4;
+        $x = (int) (10 ** $x);
+
+        $t = (int) ($timestamp / $x);
+        $t *= $x;
+
+        return $t;
     }
 
     /**
