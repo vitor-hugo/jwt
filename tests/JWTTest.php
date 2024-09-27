@@ -58,6 +58,7 @@ class JWTTest extends TestCase
             "uid" => "123456789",
             "user" => "user@host.com",
             "name" => "User Something",
+            "iat" => time() - JWT::$notBeforeLeeway
         ];
 
         $tokens = [];
@@ -320,8 +321,9 @@ class JWTTest extends TestCase
         $timestamp = time();
 
         $payload = [
-            "iat" => $timestamp - 500,
-            "exp" => $timestamp - 400
+            "iat" => $timestamp - 600,
+            "nbf" => $timestamp - 1200,
+            "exp" => $timestamp - 500
         ];
 
         $key = $this->getRightDecodingKey(JWTAlg::HS256);
