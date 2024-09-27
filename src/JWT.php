@@ -29,6 +29,13 @@ final class JWT
     public static int $expirationTime = 300;
 
     /**
+     * The "nbf" (not before) claim identifies the time before which the JWT must not be accepted for processing.
+     * Default 3 seconds (3).
+     * @var int
+     */
+    public static int $notBeforeLeeway = 3;
+
+    /**
      * Generates a Json Web Token
      * @param array $payload Main token content
      * @param string|array|OpenSSLAsymmetricKey|OpenSSLCertificate $privateKey $key
@@ -96,7 +103,7 @@ final class JWT
         }
 
         if (!array_key_exists("nbf", $payload)) {
-            $payload["nbf"] = self::calcNBF($payload["iat"]);
+            $payload["nbf"] = $payload["iat"] + self::$notBeforeLeeway;
         }
 
         if (!array_key_exists("exp", $payload)) {
@@ -104,22 +111,6 @@ final class JWT
         }
 
         return self::arrayToBase64($payload);
-    }
-
-    /**
-     * 'Not before' is a time controller that tells the system that the token cannot be used before certain timestamp
-     * @param int $timestamp
-     * @return int
-     */
-    private static function calcNBF(int $timestamp): int
-    {
-        $x = strlen((string) $timestamp) - 4;
-        $x = (int) (10 ** $x);
-
-        $t = (int) ($timestamp / $x);
-        $t *= $x;
-
-        return $t;
     }
 
     /**
@@ -410,8 +401,8 @@ final class JWT
 
         $timestamp = time();
 
-        if ($iat > $timestamp || $nbf > $timestamp || $nbf > $iat) {
-            throw new InvalidTokenException("JWT: Invalid json web token");
+        if ($nbf > $timestamp || $iat > $timestamp) {
+            throw new InvalidTokenException("JWT: Invalid json web token.");
         }
 
         if ($exp < $timestamp) {
